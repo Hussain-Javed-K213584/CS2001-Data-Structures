@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 #include "dictionary.h"
-#include "hashmap.h"
+#include "../HashMap_lib/hashmap.h"
 using namespace std;
 
 Dictionary::Dictionary()

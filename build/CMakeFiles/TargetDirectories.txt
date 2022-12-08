@@ -1,0 +1,9 @@
+/home/hussain/Desktop/CS2001-Data-Structures/build/CMakeFiles/speller.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/CMakeFiles/edit_cache.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/CMakeFiles/rebuild_cache.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/HashMap_lib/CMakeFiles/hashmap.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/HashMap_lib/CMakeFiles/edit_cache.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/HashMap_lib/CMakeFiles/rebuild_cache.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/Dictionary_lib/CMakeFiles/dictionary.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/Dictionary_lib/CMakeFiles/edit_cache.dir
+/home/hussain/Desktop/CS2001-Data-Structures/build/Dictionary_lib/CMakeFiles/rebuild_cache.dir

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "hashmap.h"
+#include "../HashMap_lib/hashmap.h"
 class Dictionary
 {
     ht_hash_table loader;

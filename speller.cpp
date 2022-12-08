@@ -4,7 +4,7 @@
 #include <sys/resource.h>
 #include <fstream>
 #include <iomanip>
-#include "dictionary.h"
+#include "Dictionary_lib/dictionary.h"
 
 using namespace std;
 
@@ -31,7 +31,7 @@ class Speller
     }
 
 public:
-    void start(const char* textFile, const char* dictionary = "dictionary/dict")
+    void start(const char* textFile, const char* dictionary = "../dictionary/dict")
     {
         getrusage(RUSAGE_SELF, &before);
         bool is_loaded = dic.load(dictionary);
