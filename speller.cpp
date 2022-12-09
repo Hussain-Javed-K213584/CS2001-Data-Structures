@@ -4,6 +4,8 @@
 #include <sys/resource.h>
 #include <fstream>
 #include <iomanip>
+#include <vector>
+#include <algorithm>
 #include "Dictionary_lib/dictionary.h"
 
 using namespace std;
@@ -31,7 +33,7 @@ class Speller
     }
 
 public:
-    void start(const char* textFile, const char* dictionary = "../dictionary/dict")
+    void start(const char* textFile, const char* dictionary = "dictionary/dict")
     {
         getrusage(RUSAGE_SELF, &before);
         bool is_loaded = dic.load(dictionary);
@@ -52,8 +54,9 @@ public:
         }
         cout << "\nMISSPELLED WORDS\n\n";
 
-        size_t index = 0, misspelling = 0, words = 0;
-        string word;
+        size_t index = 0, misspelling = 0, words = 0, word_index = 0;
+        vector<string> wrong_word;
+        string temp_word;
 
         // Read letter by letter
         char c;
@@ -61,13 +64,12 @@ public:
         {
             if (isalpha(c) || (c == '\'' && index > 0))
             {
-                word += c;
+                temp_word += c;
                 index++;
                 // If string  too  long  to be a word
                 if (index > 45)
                 {
-                    while (read_f.get(c) && isalpha(c))
-                        ;
+                    while (read_f.get(c) && isalpha(c));
                     // to get new words
                     index = 0;
                 }
@@ -75,33 +77,35 @@ public:
             // Ignore words with number
             else if (isdigit(c))
             {
-                while (read_f.get(c) && isalnum(c))
-                    ;
+                while (read_f.get(c) && isalnum(c));
                 index = 0;
             }
             // When we find the whole word
             else if (index > 0)
             {
                 // Terminate current word
-
                 words++;
 
                 getrusage(RUSAGE_SELF, &before);
-                bool misspelled = dic.check(word);
+                bool misspelled = dic.check(temp_word);
                 getrusage(RUSAGE_SELF, &after);
 
                 time_check += calculate(&before, &after);
 
                 if (!misspelled)
                 {
-                    cout << word << "\n";
+                    wrong_word.push_back(temp_word);
                     misspelling++;
                 }
-
                 index = 0;
-                word = "";
+                temp_word = "";
             }
         }
+        // dic.dict_sort(wrong_word);
+        stable_sort(wrong_word.begin(), wrong_word.end());
+        for (size_t i = 0, n = wrong_word.size(); i < n; i++)
+            cout << wrong_word[i] << "\n";
+        cout << endl;
         read_f.close();
 
         getrusage(RUSAGE_SELF, &before);
@@ -120,12 +124,13 @@ public:
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3 && argc != 2)
-    {
-        cout << "Usage: ./speller [DICTIONARY] textfile\n" << endl;
-        return 1;
-    }
+    // if (argc != 3 && argc != 2)
+    // {
+    //     cout << "Usage: ./speller [DICTIONARY] textfile\n" << endl;
+    //     return 1;
+    // }
     Speller s1;
-    (argc == 3) ? s1.start(argv[1], argv[2]) : s1.start(argv[1]);
+    s1.start("texts/holmes.txt");
+    // (argc == 3) ? s1.start(argv[1], argv[2]) : s1.start(argv[1]);
     return 0;
 }

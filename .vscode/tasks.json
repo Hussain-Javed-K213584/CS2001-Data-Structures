@@ -8,8 +8,8 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
-                "hashmap.cpp",
-                "dictionary.cpp",
+                "HashMap_lib/hashmap.cpp",
+                "Dictionary_lib/dictionary.cpp",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],
