@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 #include "Dictionary_lib/dictionary.h"
 
 using namespace std;
@@ -33,7 +34,7 @@ class Speller
     }
 
 public:
-    void start(const char* textFile, const char* dictionary = "dictionary/dict")
+    void start(const char* textFile, const char* dictionary = "../dictionary/dict")
     {
         getrusage(RUSAGE_SELF, &before);
         bool is_loaded = dic.load(dictionary);
@@ -52,10 +53,10 @@ public:
             cout << "Could not read " << textFile << endl;
             exit(1);
         }
-        cout << "\nMISSPELLED WORDS\n\n";
+        cout << left << setw(37) << "MISSPELLED WORDS" << left << setw(37) <<"WORD NUMBER\n\n";
 
-        size_t index = 0, misspelling = 0, words = 0, word_index = 0;
-        vector<string> wrong_word;
+        size_t index = 0, misspelling = 0, words = 0;
+        vector <tuple<string, size_t>> wrong_word;
         string temp_word;
 
         // Read letter by letter
@@ -84,7 +85,7 @@ public:
             else if (index > 0)
             {
                 // Terminate current word
-                words++;
+                words++; //will be used as both word counter and index of wrong words
 
                 getrusage(RUSAGE_SELF, &before);
                 bool misspelled = dic.check(temp_word);
@@ -94,17 +95,25 @@ public:
 
                 if (!misspelled)
                 {
-                    wrong_word.push_back(temp_word);
+                    /* Uncomment this when showing backtracking
+
+                    string poss = dic.permute(temp_word); //Only works for incorrect arrangement
+                    wrong_word.push_back(make_tuple(temp_word, words, poss)); //pushes the string with it's respective line number   
+
+                    */
+                    wrong_word.push_back(make_tuple(temp_word, words));
                     misspelling++;
                 }
                 index = 0;
                 temp_word = "";
             }
         }
-        // dic.dict_sort(wrong_word);
-        stable_sort(wrong_word.begin(), wrong_word.end());
-        for (size_t i = 0, n = wrong_word.size(); i < n; i++)
-            cout << wrong_word[i] << "\n";
+        //Uses merge sort: stable, O(N*Log(N))
+        dic.dict_sort(wrong_word);
+        // stable_sort(wrong_word.begin(), wrong_word.end());
+        for (size_t i = 0, n = wrong_word.size(); i < n; i++){
+            cout <<  left << setw(37) << get<0>(wrong_word[i]) << left << setw(37) << get<1>(wrong_word[i]) << "\n";
+        }
         cout << endl;
         read_f.close();
 
@@ -112,25 +121,25 @@ public:
         size_t n = dic.size();
         getrusage(RUSAGE_SELF, &after);
 
-        cout << "\nWORDS MISSPELLED:        " << misspelling << endl;
-        cout << "WORDS IN DICTIONARY:       " << n << endl;
-        cout << "WORDS IN TEXT FILE:        " << words  << endl;
-        cout << "TIME TO LOAD:              " << setprecision(2) << time_load << endl;
-        cout << "TIME TO CHECK:             " << setprecision(2) << time_check << endl;
-        cout << "TOTAL TIME TAKEN:          " << setprecision(2) << time_load + time_check << endl;
+        cout << left << setw(40) << "WORDS MISSPELLED:" << misspelling << "\n";
+        cout << left << setw(40) << "WORDS IN DICTIONARY:" << n << "\n";
+        cout << left << setw(40) << "WORDS IN TEXT FILE:" << words  << "\n";
+        cout << left << setw(40) << "TIME TO LOAD:" << setprecision(2) << time_load << "\n";
+        cout << left << setw(40) << "TIME TO CHECK:" << setprecision(2) << time_check << "\n";
+        cout << left << setw(40) << "TOTAL TIME TAKEN:" << setprecision(2) << time_load + time_check << "\n";
 
     }
 };
 
 int main(int argc, char *argv[])
 {
-    // if (argc != 3 && argc != 2)
-    // {
-    //     cout << "Usage: ./speller [DICTIONARY] textfile\n" << endl;
-    //     return 1;
-    // }
+    if (argc != 3 && argc != 2)
+    {
+        cout << "Usage: ./speller [DICTIONARY] textfile\n" << endl;
+        return 1;
+    }
     Speller s1;
-    s1.start("texts/holmes.txt");
-    // (argc == 3) ? s1.start(argv[1], argv[2]) : s1.start(argv[1]);
+    
+    (argc == 3) ? s1.start(argv[1], argv[2]) : s1.start(argv[1]);
     return 0;
 }
